@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebPCControlPanel
 {
+    /// <summary>
+    /// Static console data that gets re-rendered to the screen  every update()
+    /// </summary>
     public static class ConsoleData
     {
         public static string AppName { get; set; }
@@ -15,10 +18,19 @@ namespace WebPCControlPanel
         public static long DownloadTotal { get; set; }
         public static long UploadTotal { get; set; }
     }
+    /// <summary>
+    /// Class that draws data for the server application to the console window
+    /// </summary>
     public static class ConsoleView
     {
+        /// <summary>
+        /// Where the typing pointer is currently on update
+        /// </summary>
         public static int CurrentConsoleLeft;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static void ClearConsole()
         {
             for(int i = 0; i < 19; i++)
@@ -27,6 +39,9 @@ namespace WebPCControlPanel
                 Console.Write(new string(' ', Console.WindowWidth));
             }
         }
+        /// <summary>
+        /// clears user input
+        /// </summary>
         public static void ClearInput()
         {
             Console.SetCursorPosition(0, 22);
@@ -95,6 +110,9 @@ namespace WebPCControlPanel
                 j++;
             }
         }
+        /// <summary>
+        /// Writes the network speed total and overall usage to the console window
+        /// </summary>
         public static void WriteNetworkSpeed()
         {
             // Current Looped network speed over 1 second
@@ -135,6 +153,9 @@ namespace WebPCControlPanel
             Console.SetCursorPosition(0, 11);
             Console.Write("║                                                                              ║");
         }
+        /// <summary>
+        /// Refreshes all data in the console window
+        /// </summary>
         public static void Update()
         {
             if(Console.CursorLeft == 0)
@@ -177,11 +198,14 @@ namespace WebPCControlPanel
             UpdateText();
             Console.SetCursorPosition(CurrentConsoleLeft, 22);
         }
+        /// <summary>
+        /// Shows header information in the console window
+        /// </summary>
         public static void UpdateText()
         {
             ConsoleData.AppName = "Web Control Panel by";
             ConsoleData.AuthorName = "Nathan Heinrich";
-            Console.SetCursorPosition(15, 1);
+            Console.SetCursorPosition(20, 1);
             Console.Write(ConsoleData.AppName + " " + ConsoleData.AuthorName);
             Console.SetCursorPosition(1, 3);
             Console.Write("Current Connected Client Count: " + ConsoleData.CurrentConnectedClients.ToString());

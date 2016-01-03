@@ -11,24 +11,41 @@ namespace WebPCControlPanel
 {
     class Program
     {
+        /// <summary>
+        /// Client class containing all heatbeat data in a list.
+        /// </summary>
         public static List<HeartBeat> Clients = new List<HeartBeat>();
+        /// <summary>
+        /// Client network usage class with all network usage data in it.
+        /// </summary>
         public static List<NetworkUsage> ClientUsage = new List<NetworkUsage>();
+        /// <summary>
+        /// The timer to process all automatic requests.
+        /// </summary>
         static Timer ClientHeartbeatTimer;
+        /// <summary>
+        /// How long between heatbeat requests in seconds.
+        /// </summary>
         static int HeartbeatInterval = 2;
 
         static void Main(string[] args)
         {
+            //First update of the console to draw UI
             ConsoleView.Update();
+            //Set timer up initially and activate it
             ClientHeartbeatTimer = new Timer(HeartbeatInterval * 1000);
             ClientHeartbeatTimer.Elapsed += new ElapsedEventHandler(ClientHeartbeatTimer_Elapsed);
             ClientHeartbeatTimer.Enabled = true;
 
             while (true)
             {
+                //Wait for user input
                 string ConsoleString = Console.ReadLine();
+                //Split console commands via a space or " " represented as a null
                 String[] ConsoleCommand = ConsoleString.Split(null);
                 switch (ConsoleCommand[0])
                 {
+                    //The add command to add a new client to the Clients list
                     case "add":
                         if(!WebPost.SendRequest(ConsoleCommand[1]))
                         {
@@ -39,11 +56,13 @@ namespace WebPCControlPanel
                             ConsoleData.CurrentConnectedClients += 1;
                         }
                         break;
+                    //Set the interval between 
                     case "update":
                         HeartbeatInterval = Convert.ToInt32(ConsoleCommand[1]);
                         ClientHeartbeatTimer.Interval = (HeartbeatInterval * 1000);
                         ConsoleView.AddLog("Update rate modifier: " + ConsoleCommand[1]);
                         break;
+                    //Restart the remote computer
                     case "restart":
                     case "reboot":
                         if (!WebPost.SendRequest(ConsoleCommand[1], false, "{\"restartPc\" : true}"))
@@ -55,6 +74,7 @@ namespace WebPCControlPanel
                             ConsoleView.AddLog("Restarting remote computer " + ConsoleCommand[1]);
                         }
                         break;
+                    //show the next 5 clients in the list on the console ui
                     case "list":
                         ConsoleView.WriteClients(Convert.ToInt32(ConsoleCommand[1]));
                         break;
@@ -70,6 +90,9 @@ namespace WebPCControlPanel
 
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         static void ClientHeartbeatTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             int clientIndex = 0;
@@ -108,18 +131,6 @@ namespace WebPCControlPanel
             }
             ConsoleData.CurrentConnectedClients = clientIndex;
             ConsoleView.Update();
-        }
-        public static int getHighestClientNum()
-        {
-            int HeighestNum = 0;
-            foreach (var client in Clients )
-            {
-                if(client.pcId > HeighestNum)
-                {
-                    HeighestNum = client.pcId;
-                }
-            }
-            return HeighestNum;
         }
     }
 }
